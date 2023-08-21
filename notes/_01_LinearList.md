@@ -33,7 +33,7 @@
 > };
 > ```
 >
-> *关于template class见[_1_Template-Class.cpp](E:\Programming\Notes\DataStructuresAndAlgorithms\code\_01_Template-Class.cpp)
+> 关于template class见[_1_Template-Class.cpp](https://github.com/likaikkk/DataStructuresAndAlgorithms/blob/master/code/_01_Template-Class.cpp)
 
 #### 1.3线性表的主要操作
 
@@ -67,7 +67,7 @@
 
 #### 2.1顺序表的实现
 
-> *见* [_02_ArrayList.cpp](E:\Programming\Notes\DataStructuresAndAlgorithms\code\_02_ArrayList.cpp )
+> *见* [_02_ArrayList.cpp](https://github.com/likaikkk/DataStructuresAndAlgorithms/blob/master/code/_02_ArrayList.cpp )
 
 ## 3. 链表
 
