@@ -2,11 +2,11 @@
 
 using namespace std;
 
-template<class T>       //绾挎�ц〃鐨勫厓绱犵被鍨嬩负T
-class ArrayList         //瀹氫箟椤哄簭琛ˋrrayList
+template<class T>       //线性表的元素类型为T
+class ArrayList         //定义顺序表ArrayList
 {
 private:
-    T* arrayList;       //瀛樺偍椤哄簭琛ㄧ殑瀹炰緥
+    T* arrayList;       //存储顺序表的实例
     int maxSize;
     int curLen;
     //int position;
@@ -31,6 +31,7 @@ public:
         arrayList = new T[maxSize];
     }
     int Length();
+    void Show();
     bool Append(const T value);
     bool Insert(const int p, const T value);
     bool Delete(const int p);
@@ -44,6 +45,15 @@ template<class T>
 int ArrayList<T>::Length()
 {
     return curLen;
+}
+
+template<class T>
+void ArrayList<T>::Show()
+{
+    for (int i = 0;i < curLen;i++) {
+        cout << arrayList[i] << " ";
+    }
+    cout << endl;
 }
 
 template<class T>
@@ -139,7 +149,7 @@ int ArrayList<T>::Search(T x)
             return i;
     return -1;
 }
-
+/*
 int main() {
     ArrayList<int> arr(5);
 
@@ -191,3 +201,4 @@ int main() {
 
     return 0;
 }
+*/

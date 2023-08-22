@@ -69,7 +69,19 @@
 
 > *见* [_02_ArrayList.cpp](https://github.com/likaikkk/DataStructuresAndAlgorithms/blob/master/code/_02_ArrayList.cpp )
 
+#### 2.2顺序表的应用
+
+> 求两个顺序表的差集：见[__03_DifferenceOfSeqList.cpp_]()
+
 ## 3. 链表
+
+#### 3.1单链表
+
+#### 3.2双向链表
+
+#### 3.3循环链表
+
+#### 3.4链表的应用
 
 ## 4. 栈
 
