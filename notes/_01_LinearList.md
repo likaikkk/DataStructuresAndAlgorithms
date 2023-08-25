@@ -157,14 +157,14 @@
 > >    };
 > >    ```
 > >    
-> 
-> 对于单链表，最常用的运算就是**`检索`、`插入`、`删除`。**
-> 
->1. **单链表检索结点**
-> 
->   ```cpp
+>
+> 对于单链表，最常用的运算就是`检索`、`插入`、`删除`。
+>
+> 1. **单链表检索结点**
+>
+>    ```cpp
 >    template<class T>
->   LinkNode<T>* LinkList<T>::setPos(int i)
+>    LinkNode<T>* LinkList<T>::setPos(int i)
 >    {
 >        if (i == -1)                         //i为-1则定位到头结点
 >            return head;
@@ -177,15 +177,15 @@
 >        return p;                           //指向第i个结点，当链表长度小于i时返回NULL
 >    }
 >    ```
-> 
->    链表中第i个结点是按照C/C++的数组下标编号规则，从0到n-1，头结点的编号时-1.当单链表实际长度小于给定的i时，返回NULL，当i为-1时返回头结点的指针。
-> 
->2. **单链表插入结点**
+>
+>    ​	链表中第i个结点是按照C/C++的数组下标编号规则，从0到n-1，头结点的编号时-1.当单链表实际长度小于给定的i时，返回NULL，当i为-1时返回头结点的指针。
+>
+> 2. **单链表插入结点**
 >    ![单链表插入运算实现方法](https://i.postimg.cc/1zBnnB6n/1692767483752.jpg)
 >
 >    ```cpp
 >    template<class T>
->   bool LinkList<T>::insertPos(const int i, const T value)
+>    bool LinkList<T>::insertPos(const int i, const T value)
 >    {
 >        LinkNode<T>* p = setPos(i - 1);         //p是第i个结点的前驱
 >        LinkNode<T>* q;                         //q是新插入的结点        
@@ -201,12 +201,14 @@
 >        return true;
 >    }
 >    ```
-> 
+>
+>    
+>    
 > 3. **单链表删除结点**
-> 
->   ```cpp
+>
+>    ```cpp
 >    template<class T>
->   bool LinkList<T>::deletePos(const int i)
+>    bool LinkList<T>::deletePos(const int i)
 >    {
 >        LinkNode<T>* p, * q;
 >        if ((p = setPos(i - 1)) == NULL||p==tail) {
@@ -215,21 +217,25 @@
 >        }
 >        q = p->link;                //q为真正待删除点
 >        p->link = q->link;
-> 
+>    
 >        if (q == tail)              //删除点为表尾，修改尾指针
 >            tail = p;
 >    
 >        delete q;
 >        return true;
->       }
+>    }
 >    ```
-> 
+>
+>    
+>
 > 4. 单链表的反转
 >    ![单链表的反转示意图](https://i.postimg.cc/FKLt1GbX/1692797807696.jpg)
 >
+>    
+>    
 >    ```cpp
 >    template<class T>
->   bool LinkList<T>::invert()
+>    bool LinkList<T>::invert()
 >    {
 >        LinkNode<T>* q, * p, R;
 >        p = head->link;             //将p指向首结点
@@ -245,10 +251,12 @@
 >        return true;
 >    }
 >    ```
-> 
+>
+>    
+>    
 >    ![单链表的反转](https://i.postimg.cc/zBWYVprR/1692798345016.jpg)
-> 
->5. 单链表完整代码见
+>    
+> 5. 单链表完整代码见[_04_LinkList.cpp](https://github.com/likaikkk/DataStructuresAndAlgorithms/blob/master/code/_04_LinkList.cpp)
 
 #### 3.2双向链表
 
