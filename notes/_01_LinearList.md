@@ -250,7 +250,7 @@ public:
 
    <img src="https://i.postimg.cc/zBWYVprR/1692798345016.jpg" alt="单链表的反转" style="zoom:150%;" />
 
-   5. **单链表完整代码见**[_04_LinkList.cpp](https://github.com/likaikkk/DataStructuresAndAlgorithms/blob/master/code/_04_LinkList.cpp)
+5. **单链表完整代码见**[_04_LinkList.cpp](https://github.com/likaikkk/DataStructuresAndAlgorithms/blob/master/code/_04_LinkList.cpp)
 
 #### 3.2双向链表
 
