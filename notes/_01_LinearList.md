@@ -217,10 +217,10 @@
 >        }
 >        q = p->link;                //q为真正待删除点
 >        p->link = q->link;
->    
+>                   
 >        if (q == tail)              //删除点为表尾，修改尾指针
 >            tail = p;
->    
+>                   
 >        delete q;
 >        return true;
 >    }
@@ -228,13 +228,11 @@
 >
 >    
 >
-> 4. 单链表的反转
->    ![单链表的反转示意图](https://i.postimg.cc/FKLt1GbX/1692797807696.jpg)
->
->    
->    
->    ```cpp
->    template<class T>
+> 4. **单链表的反转**
+>    <img src="https://i.postimg.cc/FKLt1GbX/1692797807696.jpg" alt="单链表的反转示意图" style="zoom: 150%;" />
+>   
+>       ```cpp
+>       template<class T>
 >    bool LinkList<T>::invert()
 >    {
 >        LinkNode<T>* q, * p, R;
@@ -250,22 +248,176 @@
 >        head->link = q;
 >        return true;
 >    }
->    ```
+>       ```
+>    
+>    <img src="https://i.postimg.cc/zBWYVprR/1692798345016.jpg" alt="单链表的反转" style="zoom:150%;" />
 >
->    
->    
->    ![单链表的反转](https://i.postimg.cc/zBWYVprR/1692798345016.jpg)
->    
-> 5. 单链表完整代码见[_04_LinkList.cpp](https://github.com/likaikkk/DataStructuresAndAlgorithms/blob/master/code/_04_LinkList.cpp)
+>    5. **单链表完整代码见**[_04_LinkList.cpp](https://github.com/likaikkk/DataStructuresAndAlgorithms/blob/master/code/_04_LinkList.cpp)
 
 #### 3.2双向链表
 
+> ​	**双向链表**其基本结构就是在单链表的每个结点中增加一个指向前驱结点的指针，结构特点如图所示，`next`表示指向后继结点的指针，prev指向前驱结点。            
+>
+> [![双向链表](https://i.postimg.cc/RhcZ06Qk/1692982796354.jpg)](https://postimg.cc/xN12xdZ5)
+>
+> 【双向链表的结点定义】
+>
+> ```cpp
+> //Node definition of DoubleLinkedList
+> template<class T>
+> class DLLNode{
+> public:
+>  T data;         //Save the content of the Node element
+>  DLLNode<T>* next;   //Pointer to successor node
+>  DLLNode<T>* prev;   //Pointer to predecessor node
+>  //Constructor
+>  DLLNode(const T info, DLLNode<T>* prevVal = NULL, DLLNode<T>* nextVal = NULL) {
+>      data = info;
+>      prev = prevVal;
+>      next = nextVal;
+>  }
+>  //Constructor given only bidirectional pointer
+>  DLLNode(DLLNode<T>* prevVal = NULL, DLLNode<T>* nextVal = NULL) {
+>      prev = prevVal;
+>      next = nextVal;
+>  }
+> };
+> ```
+>
+> 1.【双向链表中插入新结点】
+>
+> ​	双向链表中要在p所指节点后插入一个新的结点q，具体操作步骤：
+>
+> 1. 执行`new q`开辟结点空间
+>
+> 2. 填写结点数据域信息
+>
+> 3. 填写结点在双向链表中的链接关系，即
+>    `q->prev = p;`
+>
+>    `q->next = p->next;`
+>
+> 4. 修改p所指结点及后继结点在新结点插入后的链接信息：
+>    `p->next = q;`
+>    `q->next->prev = q;`
+>
+> ![示意图](https://i.postimg.cc/Dw608F4z/1693050401358.jpg)
+>
+> 2.**【双向链表中删除结点】**
+>
+> 1. 修改相应的指针
+>    `p->next->prev = p->prev;`
+>
+>    `p->prev->next = p->next;`
+>
+> 2. 释放被删结点空间
+>    `delete p;`
+
 #### 3.3循环链表
+
+> ​	在单链表中有一件重要的事情就是**维护表头的指针**，因为单链表具有*方向性*，所以如果链表的表头指针被破坏或损失，就会丢失整个链表，同时浪费了整个链表的存储空间。
+>
+> ​	将单链表的最后一个结点的指针不为`NULL`，而是指向表首结点，就成为一个**循环单链表**。如此就不用担心链表头指针遗失的问题了，因为每个结点都能是链表头部。使用循环链表的主要**优点**是：*从循环链表中的任一结点出发，都能访问表中的其它结点。*
+>
+> ​	循环链表分类：
+> ![](https://i.postimg.cc/FsHZnFby/1693051322519.jpg)
+>
+> 1. 【**循环单链表插入结点**】
+>    	因为每个结点的 指针域都是指向下一个结点，所以没有所谓的从链表尾部插入的问题。通常会出现下面三种情况：
+>
+>    1. *将新结点插入到带头结点的循环单链表**第一个结点之前***：首先将新结点`X`的指针域指向原链表头结点的后继，再将循环单链表的头结点指针域指向新结点`X`。
+>       `X->next = head->next;`
+>       `head->next = X;`
+>    2. *将新结点插入到带头结点的循环单链表**最后一个结点之后***：首先找到最后一个结点，将最后一个结点的指针域指向新结点`X`，然后将新结点`X`的指针域指向原链表头结点，再将循环单链表的尾指针指向新结点`X`.
+>       `tail->next = X;`
+>       `X->next = head;`
+>       `tail = X;`
+>    3. 将新结点插入到带头结点的循环单链表**任意结点`I`之后**：
+>       `X->next = I->next;`
+>       `I->next = x;`
+>
+> 2. **【循环单链表删除结点】**
+>
+>    1. *删除带头结点的循环单链表的**第一个结点***：
+>       `Y = head->next;`
+>       `head->next = Y->next;`
+>       `delete Y;`
+>
+>    2. *删除带头结点的循环单链表的**尾结点***：首先找到尾结点Y的前一个结点，将尾指针tail指向这个结点，然后将这个结点的指针域改为指向该循环单链表的头结点，最后删除Y。
+>
+>       ```cpp
+>       CurNode = head;
+>       Y = tail;
+>       while(CurNode->next != Y){
+>           CurNode = CurNode->next;  //找到链表尾结点的前驱结点
+>       }
+>       tail = CurNode;
+>       CurNode->next = head;
+>       delete Y;
+>       ```
+>
+>    3. *删除带头结点的循环单链表的**中间结点***：首先找到待删除结点Y的前一个结点，用PreNode记录下来，再将PreNode的指针域指向Y的下一个结点，最后删除Y。
+>
+>       ```cpp
+>       PreNdoe = head;
+>       while(PreNode->next != Y)
+>           PreNode = PreNode->next;
+>       PreNode->next = Y->next;
+>       delete Y;
+>       ```
+>
+> 3. **【循环单链表的反转】**
+>         循环单链表的反转需要遍历整个链表，和单链表的反转类似，不同之处在于*尾结点的处理*，循环单链表尾结点的指针域需要指向循环单链表的头结点。
+>
+>    ```cpp
+>    template<class T>
+>    bool LinkList<T>::invert(){
+>        if(head->link == NULL){
+>            return false;
+>        }
+>        LinkNode<T> *p,*q,*r;
+>        p = head->next;
+>        q = r = head;
+>        while(p != head){
+>            q = p->next;
+>            p->next = r;
+>            r = p;
+>            p = q;
+>        }
+>        tail head->next;
+>        head->next = r;
+>        return true;
+>    }
+>    ```
 
 #### 3.4链表的应用
 
 ## 4. 栈
 
+#### 4.1顺序栈
+
+#### 4.2链式栈
+
+#### 4.3栈与递归
+
+#### 4.4递归的应用
+
+#### 4.5栈的应用
+
 ## 5. 队列
 
-### 6. 字符串
+#### 5.1顺序队列
+
+#### 5.2链式队列
+
+#### 5.3队列的应用
+
+## 6. 字符串
+
+#### 6.1基本概念
+
+#### 6.2存储结构和实现
+
+#### 6.3字符串运算的算法实现
+
+#### 6.4字符串的模式匹配
