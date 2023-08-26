@@ -217,10 +217,10 @@
 >        }
 >        q = p->link;                //q为真正待删除点
 >        p->link = q->link;
->                   
+>                         
 >        if (q == tail)              //删除点为表尾，修改尾指针
 >            tail = p;
->                   
+>                         
 >        delete q;
 >        return true;
 >    }
@@ -392,9 +392,113 @@
 
 #### 3.4链表的应用
 
-## 4. 栈
+## 4. 栈Stack
+
+​	**栈**是一种*限制访问端口的线性表*，即栈的所有操作都限制在线性表的一端进行。线性表的元素插入（称为栈的`压入`）和删除（称为栈的`弹出`）都限制在表首进行。**表首被称为`栈顶`**，而栈的另一端称为`栈底`。栈的**特点**是：每次取出（并删除）的总是刚刚压入的元素，即在时间上最后压入的元素。而最先压入的元素则被放在栈的底部，需要到最后才能取出。因而，栈又称为“*后进先出表*‘“（last in  first out, LIFO）、“下推表”。栈通常有两种方式是实现，分别是采用顺序存储结构的`顺序栈`与链式结构的`链式栈`。
+​	【栈的类定义】
+
+```cpp
+template<class T>
+class Stack {
+public:
+    void Clear();               //Empty stack
+    bool Push(const T item);    //Stack push operation
+    bool Pop(T& item);          //Read the value of the top element of the stack and delete it
+    bool Top(T& item);          //Read the value of the top element of the stack without deleting it
+    bool IsEmpty();             //Check if the stack is empty
+    bool IsFull();              //Check if the stack is full
+};
+```
 
 #### 4.1顺序栈
+
+> ​	*采用顺序存储结构的栈被称为顺序栈*，需要一块**地址连续的存储单元**存储栈中的元素。因此需要实现知道或估计栈的大小。
+>
+> ​	**栈的本质是简化的顺序表**，对元素数目为n的栈，首先要确定数组的哪一段表示栈顶。如果把数组的第0个位置作为栈顶，按照栈的定义，所有的插入和删除操作都在第0个位置上进行，即意味着每次的push和pop操作都需要把当前的栈的所有元素在数组中后移或者前移一个位置，时间复杂度为O(n)。反之，如果把最后一个元素的位置n-1作为栈顶，那么只需要将新元素添加在表尾，出栈操作也只需要删除表尾的元素，每次操作的时间复杂度仅为O(1)。
+>
+> ​	顺序栈实现时，用一个整型变量`top`(通常为栈顶指针)来指示当前栈顶位置，同时也可以表示当前栈中元素的个数。
+>
+> 【顺序栈的部分实现】
+>
+> ```cpp
+> template<class T>
+> class ArrayStack :public Stack<T>
+> {
+> private:
+>     int maxSize;                //The maximum size of the stack
+>     int top;                    //Position of the top of the stack
+>     T* st;                      //Array to store stack elements
+> public:
+>     ArrayStack(int size) {      //Create a ArrayStack instance with a given length
+>         maxSize = size;
+>         top = -1;
+>         st = new T[maxSize];
+>     }
+>     ArrayStack() {              //Create a ArrayStack instance
+>         top = -1;
+>     }
+>     ~ArrayStack() {             //Destructor
+>         delete[]st;
+>     }
+>     void Clear() {
+>         top = -1;               //Clear the contents of the stack
+>     }
+>     bool Push(const T item) {   //Push operation
+>         if (top == maxSize - 1) {
+>             cout << "The stack is overflow" << endl;
+>             return false;
+>         }
+>         else {                  //Push and modify the top pointer
+>             st[++top] = item;
+>             return true;
+>         }
+>     }   
+>     bool Pop(T& item) {         //Pop operation
+>         if (top == -1) {        //Stack is empty
+>             cout << "The stack is empty, unable to delete" << endl;
+>         }
+>         else {
+>             item = st[top--];   //Read the top element and modify teh top pointer
+>             return true;
+>         }
+>     }
+>     bool Top(T& item) {         //Read the top element without deleting
+>         if(top == -1) {         //Stack is empty
+>             cout << "The stack is empty, unable to read the top element" << endl;
+>             return false;
+>         }
+>         else {
+>             item = st[top];  
+>             return true;
+>         }
+>     }
+> };
+> ```
+>
+> ​	当栈中已有maxSize个元素时，进栈操作会产生溢出现象，称为`上溢`；相应的，在空栈上进行出栈操作同样也会方式溢出，称为`下溢`。
+>
+> ​	如果出现上溢时仍希望进行进栈操作，可以考虑适当的扩充当前顺序栈的容量。
+>
+> 【**改进的进栈操作**】
+>
+> ```cpp
+> template<class T>
+> bool ArrayStack<T>::push(const T item){
+>     if(top == maxSize-1){
+>         T* newSt = new T [maxsSize*2];
+>         for(int i = 0; i <= top; i++){
+>             newSt[i] = st[i];
+>         }
+>         delete [] st;			//release the original stack
+>         st = newSt;
+>     	maxSize *= 2;
+>     }
+>     st[++top] = item;
+>     return true;
+> }
+> ```
+>
+> 【ArrayStack完整代码】
 
 #### 4.2链式栈
 
