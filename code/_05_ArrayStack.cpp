@@ -1,5 +1,5 @@
 #include<iostream>
-#include "_06_StackClass.cpp"
+#include "_06_StackClass.h"
 using namespace std;
 
 template<class T>
