@@ -500,6 +500,14 @@ bool ArrayStack<T>::push(const T item){
 
 ### 4.2链式栈
 
+​		链表用来实现栈的优点是**随时可以动态改变链表的长度，**缺点是算法略微复杂。*链式栈本质是简化的链表*，为了方便存取，栈顶元素设置为链表首结点，，变量top设置为指向栈顶的指针。
+
+![链式栈示意图](https://i.postimg.cc/44qZQzVH/1693105796510.jpg)
+
+​		下面给出链式栈的一个简单实现，数据成员top为指向链式栈首结点的指针，链表的结点类型为LinkNode类。进栈操作push在链表首结点之前插入元素，出栈操作pop删除链表首结点元素并释放空间，时间复杂度均为O(1)。
+
+​		【栈的链式实现】[_07_LinkStack](https://github.com/likaikkk/DataStructuresAndAlgorithms/blob/master/code/_07_LinkStack.cpp)
+
 ### 4.3栈与递归
 
 ### 4.4递归的应用
