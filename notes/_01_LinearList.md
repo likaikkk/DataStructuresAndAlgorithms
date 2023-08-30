@@ -633,6 +633,56 @@ void Hanoi(int n, char A, char B, char C) {
 
 #### 2.全排列问题
 
+**全排列问题**是指打印出序列中所有肯的排列。
+
+如果我们有一个序列：a,b,c,d 当我们输出这四个字符的全排列时，输出的格式如下：a<sub>1</sub>a<sub>2</sub>a<sub>3</sub>a<sub>4</sub>
+
+先考察第一个字符a<sub>1</sub>的位置。
+
+在输出全排列时，a<sub>1</sub>的取值依次为a或b或c或d。
+
+下面给出全排列的递归解法。
+
+（1）当a<sub>1</sub>取定为a的时候，余下序列为b,c,d。
+
+我们发现a和序列b,c,d的全排列的组合{a,bcd全排列}，就构成了以a开头的序列的全排序。子问题就是求bcd序列的全排序了，可以发现此时子问题的规模减小了1。那么用递归就很直观了。
+
+（2）把a<sub>1</sub>取定为b。那么问题就变成了{b,acd全排列}。
+
+依此类推，直到所有a<sub>1</sub>的可能的取值下的子问题都解决了就能得到全排列。
+
+【求解全排列问题的递归算法】
+
+```cpp
+void swap_m(char* a, char* b) {//swap a for b
+    if (*a != *b) {
+        char temp = *a;
+        *a = *b;
+        *b = temp;
+    }
+    else if (*a == *b) {
+        cout << "Identical swap occurs" << endl;
+    }
+}
+
+void permutation(char* per, char* begin) {
+    if (per == NULL)return;//If the input is NULL,return immediately
+    if (*begin == '\0')//If the current character is the null terminator,the permutation is complete
+        cout << per << endl;//Print the generated permutation
+    else {
+        for (char* pCh = begin;*pCh != '\0';pCh++) {
+            if (pCh != begin)
+                swap_m(pCh, begin);//Swap the curent character with the character at the 'begin' position
+            permutation(per, (begin + 1));//Recursively generate permutation for the remaining character
+            if (pCh != begin)
+                swap_m(pCh, begin);//Swap the characters back to the original position after recursion
+        }
+    }
+}
+```
+
+详细代码见[_10_FullPermutation.cpp](https://github.com/likaikkk/DataStructuresAndAlgorithms/blob/master/code/_10_FullPermutation.cpp)
+
 ### 4.5栈的应用
 
 ## 5. 队列
