@@ -629,7 +629,9 @@ void Hanoi(int n, char A, char B, char C) {
 
 ![](https://i.postimg.cc/YSMsQwFH/7a4cd2d32fe788cae8dcfd45365d3037.jpg)
 
-由此可见，这类问题的**时间复杂度**是O(2<sup>n</sup>)。当n=3时递归过程调用了3层，即递归深度为3，总的递归次数为2<sup>3</sup>-1=7。**算法的空间复杂度**取决于递归调用时**栈的深度**，为O(n)。
+由此可见，这类问题的**时间复杂度**是O(2<sup>n</sup>)。当n=3时递归过程调用了3层，即递归深度为3，总的递归次数为2<sup>3</sup>-1=7。**算**
+
+**法的空间复杂度**取决于递归调用时**栈的深度**，为O(n)。
 
 #### 2.全排列问题
 
@@ -685,11 +687,52 @@ void permutation(char* per, char* begin) {
 
 ### 4.5栈的应用
 
-## 5. 队列
+## 5. 队列Queue
+
+**队列（queue）**也是一种限制访问端口的线性表。队列的元素只能从表的一端插入，从表的另一端删除。通常把只允许删除的一端称为`队列的头`，简称`队头(front)`，把删除操作称为`出队`；而把表的另一端称为`队列的尾`，简称`队尾`，只允许进行插入操作，称为`入队`。队列通常被称为**先进先出(first in first out, FIFO)线性表**。
+
+【队列的抽象数据类型定义】
+
+```cpp
+template<class T>
+class Queue
+{
+public:
+    void Clear;                     //clear the queue
+    bool EnQueue(const T item);     //add element item to the end of the queue
+    bool DeQueue(T& item);          //take out the first element of the queue and delete it
+    bool IsEmpty();                 //check if the queue is empty
+    bool IsFull();                  //check if the queue is full
+    bool GetFront(T& item);         //read the front element without deleting
+};
+
+
+
+```
+
+队列的存储结构主要包括**顺序存储结构和链式存储结构。**
 
 ### 5.1顺序队列
 
+用顺序存储结构来实现队列就行了顺序队列。为了有效地实现顺序队列，如果只沿用顺序表的实现方法，很难取得较高的效率。假设队列中有n个元素，顺序表的实现需要把所有元素都存储在数组的前n个位置上。如果选择把队列的尾部元素放在位置0，则出队操作的时间复杂度是0(1)，但是此时的入队操作时间复杂度为0(n)，因为需要把队列中当前元素都向后移动一个位置。如果把队列的尾放在n-1的位置上，就会出现相反的情况。
+
+如果可以保证队列元素在连续存储的同时允许队列的首尾位置在数组中移动，则可以提高队列的效率。如图2.53所示，将元素3和6分别出队列之后，队头元素变成了8，将元素12入队列之后，队尾元素变成了新入队的12。在经过多次入队和出队操作之后，队头元素由3变成了8，队尾元素也变成了新入队的12。随着出队操作的执行，队头front不断后移，同时，随着入队元素的增加，队尾rear也在不断增加。
+
+当队尾rear 达到了数组的最末端，即rear 等于maxSize-1，即使数组的前端可能还有空闲的位置，再进行入队操作也会发生溢出，这种数组实际上尚有空闲位置而发生上溢的现象称为“假溢出”。解决假溢出的方法是采用循环的方式来组织存放队列元素的数组，在逻辑上将数组看成一个环，也就是把数组中的下标编号最低的位置，看成是编号最高位置的直接后继，这可以通过取模运算实现，即数组位置x的后继位置为(x+1)%maxSize，这样就形成了循环队列，也称为环形队列。图2.54所示为一个循环队列的示意图。
+
+![](https://i.postimg.cc/L5gJvVwc/d96c03d26dd6c8f7bed56938f8080024.jpg)
+
+下面介绍如何表示一个空队列，以及如何表示一个队列已被元素填满。首先，忽略队头front 的实际位置和其内容时，队列中可能没有元素（空队列）、有一个元素、有两个元素等。如果数组有n个位置，则队列中最多有n个元素。因此，队列有n+1种不同的状态。如果把队头front的位置固定下来，则rear 应该有n+1种不同的取值来区分这n+1种状态，但实际上rear 只有n种可能的取值，除非有表示空队列的特殊情形。换言之，如果用位置0~n-1间的相对取值来表示 front和rear，则n+1种状态中必有两种不能区分。因此，需寻求其他途径来区分队列的空与满。
+
+一种方法是记录队列中元素的个数，或者用至少一个布尔变量来指示队列是否为空。此方法需要每次执行入队或出队操作时设置这些变量。另一种方法，也是顺序队列通常采用的方法，是把存储n个元素的数组的大小设置为n+1，即牺牲一个元素的空间来简化操作和提高效率。图2.55（a）表示队列为空的状态，此时front=rear；图2.55（b）表示队列的一般状态，入队操作时，rear=(rear+1)%(n+1)，出队操作时，front=(front+1)%(n+1)；图2.55（c）则表示队列为满的状态，此时(rear+1)%(n+1)=front。
+
+![](https://i.postimg.cc/JzKDKtt5/4dd6d20449194019d56f5420d90a85a0.jpg)
+
+【队列的顺序实现】见[_12_ArrayQueue.cpp](https://github.com/likaikkk/DataStructuresAndAlgorithms/blob/master/code/_12_ArrayQueue.cpp)
+
 ### 5.2链式队列
+
+【队列的链式实现】见[_13_LinkQueue.cpp](https://github.com/likaikkk/DataStructuresAndAlgorithms/blob/master/code/_13_LinkQueue.cpp)
 
 ### 5.3队列的应用
 
