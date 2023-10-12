@@ -39,6 +39,8 @@ public:
         rear = NULL;
         size = 0;
     }
+
+    //add element item to the end of the queue
     bool EnQueue(const T item) {
         if (rear == NULL) {
             front = rear = new LinkNode<T>(item, NULL);
@@ -50,6 +52,8 @@ public:
         size++;
         return true;
     }
+
+    //take out the first element of the queue and delete it
     bool DeQueue(T& item) {
         LinkNode<T>* temp;
         if (size == 0) {
@@ -66,6 +70,8 @@ public:
         size--;
         return true;
     }
+
+    //read the front element without deleting
     bool GetFront(T& item) {
         if (size == 0) {
             cout << "The queue is empty" << endl;

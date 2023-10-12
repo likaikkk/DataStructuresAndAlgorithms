@@ -1,347 +1,263 @@
-#include<iostream>
+/*1.2-a-f é“¾è¡¨
 
+    void createLink();				//1.2-a ä»¥è¡¨å°¾æ·»åŠ ç»“ç‚¹çš„æ–¹å¼æ„å»ºé“¾è¡¨
+    int findNode(const T& value);	//1.2-b æŸ¥æ‰¾å€¼ä¸ºvalueçš„ç»“ç‚¹ï¼Œè¿”å›ç¬¬ä¸€ä¸ªå€¼ä¸ºvalueçš„ç»“ç‚¹ä½ç½®ï¼Œè‹¥ä¸å­˜åœ¨è¿”å›-1
+    void deleteValue(const T& value);//1.2-c åˆ é™¤æ‰€æœ‰å€¼ä¸ºvalueçš„ç»“ç‚¹
+    bool insertPos(const int i, const T value); //1.2-d åœ¨æŒ‡å®šä½ç½®æ’å…¥ç»“ç‚¹
+    bool deletePos(const int i);				//1.2-e åˆ é™¤æŒ‡å®šä½ç½®çš„ç»“ç‚¹
+    int reFindPos(const int K);     //1.2-f æŸ¥æ‰¾å€’æ•°ç¬¬Kä¸ªç»“ç‚¹
+
+*/
+#include <iostream>
 using namespace std;
 
-//µ¥Á´±íµÄ½áµã¶¨Òå
-template<class T>
+template <class T>
 class LinkNode {
 public:
-    T data;                 //Êı¾İÓò
-    LinkNode<T>* link;      //Ö¸ÕëÓò
-    LinkNode() {}
-    LinkNode(const T& el, LinkNode<T>* ptr = 0) {
+    T data; //æ•°æ®åŸŸ
+    LinkNode<T>* link; //æŒ‡å‘åç»§æŒ‡é’ˆçš„ç»“ç‚¹
+    LinkNode()
+    {
+        data = 0;
+        link = NULL;
+    }
+    LinkNode(const T& el)
+    {
         data = el;
-        link = ptr;
+        link = NULL;
     }
-    /* 
-    LinkNode<T>* ptr = 0 ÖĞµÄ ptr = 0 ±íÊ¾½«Ö¸Õë ptr ³õÊ¼»¯Îª¿ÕÖ¸Õë£¨nullptr£©£¬
-    ÔÚ C++ ÖĞ£¬¿ÕÖ¸ÕëÍ¨³£ÓÃÊı×Ö 0 »òÕß¹Ø¼ü×Ö nullptr À´±íÊ¾¡£
-
-    ÔÚÕâ¸öÌØ¶¨µÄ¹¹Ôìº¯ÊıÖĞ£¬LinkNode(const T& el, LinkNode<T>* ptr = 0)£¬µÚ¶ş¸ö²ÎÊı ptr ÊÇÒ»¸ö¿ÉÑ¡²ÎÊı£¬ÕâÒâÎ¶×ÅÔÚµ÷ÓÃ¹¹Ôìº¯ÊıÊ±¿ÉÒÔ²»Ìá¹©Õâ¸ö²ÎÊı£¬Èç¹û²»Ìá¹©µÄ»°£¬¾Í»áÊ¹ÓÃÄ¬ÈÏÖµ¡£Ä¬ÈÏÖµÔÚÕâÀïÉèÖÃÎª 0£¬¼´¿ÕÖ¸Õë¡£
-
-    ÕâÖÖ×ö·¨ÔÊĞíÔÚ´´½¨½ÚµãµÄÊ±ºò¿ÉÒÔÑ¡ÔñÊÇ·ñ´«ÈëÒ»¸öÖ¸ÏòÏÂÒ»¸ö½ÚµãµÄÖ¸Õë¡£Èç¹ûÄãÌá¹©ÁËÕâ¸öÖ¸Õë£¬½Úµã½«Á¬½Óµ½Ìá¹©µÄ½Úµã£¬Èç¹ûÃ»ÓĞÌá¹©£¬Ëü½«±»³õÊ¼»¯ÎªÒ»¸ö¿ÕÖ¸Õë£¬±íÊ¾¸Ã½Úµã²»Á¬½Óµ½ÈÎºÎÆäËû½Úµã£¬¼´ËüÊÇÁ´±íÖĞµÄ×îºóÒ»¸ö½Úµã¡£
-     */
 };
 
-//µ¥Á´±íµÄÀàĞÍ¶¨Òå
-template<class T>
-class LinkList
-{
+template <class T>
+class LinkList {
 private:
-    LinkNode<T>* head, * tail;      //±íÍ·ºÍ±íÎ²Ö¸Õë
-    //¼ÇÂ¼µ±Ç°±éÀúÎ»ÖÃµÄÖ¸Õë£¬ÓÉ²åÈëºÍÉ¾³ı²Ù×÷¸üĞÂ
-    /* prevPtr£¨Ç°ÇıÖ¸Õë£©£ºËüÖ¸Ïòµ±Ç°Î»ÖÃµÄÇ°Ò»¸ö½Úµã¡£ÔÚ²åÈëºÍÉ¾³ı½ÚµãÊ±£¬ĞèÒªÖªµÀÇ°Ò»¸ö½Úµã£¬ÒÔ±ãÕıÈ·µØ½¨Á¢ºÍÎ¬»¤Á´±íµÄÁ¬½Ó¡£
-
-currPtr£¨µ±Ç°Ö¸Õë£©£ºËüÖ¸Ïòµ±Ç°Î»ÖÃ½Úµã¡£ÕâÊÇÁ´±í±éÀúºÍ½Úµã²Ù×÷µÄÖ÷ÒªÖ¸Õë£¬¿ÉÒÔÓÃÀ´·ÃÎÊµ±Ç°Î»ÖÃ½ÚµãµÄÊı¾İÒÔ¼°½øĞĞ²åÈë¡¢É¾³ıµÈ²Ù×÷¡£ */
-    LinkNode<T>* prevPtr, * currPtr;
-    int position;                   //µ±Ç°ÔªËØÔÚ±íÖĞµÄÎ»ÖÃĞòºÅ£¬ÓÉº¯ÊıresetÊ¹ÓÃ
+    LinkNode<T>* head, * tail; //è¡¨å¤´å’Œè¡¨å°¾æŒ‡é’ˆ
 public:
-    LinkList() {
-        head = new LinkNode<T>; //´´½¨Ò»¸öĞéÄâÍ·½áµã
-        tail = head;
-        position = 0;
-        prevPtr = currPtr = head;
+    LinkList()
+    {
+        LinkNode<T>* s = new LinkNode<T>;
+        head = s;
+        tail = s;
     }
-    ~LinkList() {
+    ~LinkList()
+    {
         clear();
-        delete head;
     }
-    int getSize()const;             //·µ»ØÁ´±íÖĞÔªËØ¸öÊı
-    bool isEmpty()const;            //Á´±íÊÇ·ñÎª¿Õ
-    void reset(int pos = 0);        //³õÊ¼»¯Ö¸ÕëµÄÎ»ÖÃ£¨µÚÒ»Î»ÊıµÄÎ»ÖÃÉèÖÃÎª0£©
-    void next();                    //Ê¹Ö¸ÕëÒÆ¶¯µ½ÏÂÒ»¸ö½áµã
-    bool endOfList()const;          //Ö¸ÕëÊÇ·ñµ½ÁËÁ´Î²
-    int currentPosition(void);      //·µ»ØÖ¸Õëµ±Ç°Î»ÖÃ
-    void insertHead(const T& item); //ÔÚ±íÍ·²åÈë½áµã
-    void insertTail(const T& item); //ÔÚ±íÎ²²åÈë½áµã
-    void insertAt(const T& item);   //ÔÚµ±Ç°½áµãÖ®Ç°²åÈë½áµã
-    void insertAfter(const T& item);//ÔÚµ±Ç°½áµãÖ®ºó²åÈë½áµã
-    void deleteCurrent();           //É¾³ıµ±Ç°½áµã
-    T& data();                      //·µ»Ø¶Ôµ±Ç°½áµã³ÉÔ±Êı¾İµÄÒıÓÃ
-    /* º¯Êıºó¼ÓconstÒâÎ¶×ÅÎª³£³ÉÔ±º¯Êı£¬·µ»ØµÄÖµÒ²±ØĞëÊÇconst³£Á¿
-    ÔÚ LinkList ÀàÖĞ£¬const T& data()const; ·µ»ØÒ»¸ö¶Ôµ±Ç°½ÚµãÊı¾İµÄ³£ÒıÓÃ£¬ÕâÒâÎ¶×Åµ÷ÓÃ¸Ãº¯ÊıµÄ´úÂë²»ÄÜÍ¨¹ıÕâ¸öÒıÓÃĞŞ¸ÄÊı¾İ¡£Èç¹û·µ»ØµÄÊÇ·Ç³£ÒıÓÃ£¬ÄÇÃ´µ÷ÓÃÕß¿ÉÄÜ»áÎó½â³É¿ÉÒÔÍ¨¹ıÕâ¸öÒıÓÃĞŞ¸ÄÊı¾İ£¬ÕâÓë³£Á¿³ÉÔ±º¯ÊıµÄÉè¼ÆÒâÍ¼Ïàã£¡£*/
-    void clear();                   //Çå¿ÕÁ´±í
-    LinkNode<T>* setPos(int i);     //·µ»ØÖ¸¶¨Î»ÖÃiµÄÖ¸Õë
-    bool insertPos(const int i, const T value);//ÔÚÖ¸¶¨Î»ÖÃ²åÈë½áµã
-    bool deletePos(const int i);    //É¾³ıÖ¸¶¨Î»ÖÃµÄ½áµã
-    bool invert();                  //·´×ªÕû¸öÁ´±í
+    void createLink(); //1.2-a ä»¥è¡¨å°¾æ·»åŠ ç»“ç‚¹çš„æ–¹å¼æ„å»ºé“¾è¡¨
+    int getSize() const; //è¿”å›é“¾è¡¨ä¸­çš„å…ƒç´ ä¸ªæ•°
+    bool isEmpty() const; //é“¾è¡¨æ˜¯å¦ä¸ºç©º
+    void clear(); //æ¸…ç©ºé“¾è¡¨ï¼šé‡Šæ”¾æ‰€æœ‰ç»“ç‚¹çš„å†…å­˜ç©ºé—´
+
+    int findNode(const T& value); //1.2-b æŸ¥æ‰¾å€¼ä¸ºvalueçš„ç»“ç‚¹ï¼Œè¿”å›ç¬¬ä¸€ä¸ªå€¼ä¸ºvalueçš„ç»“ç‚¹ä½ç½®ï¼Œè‹¥ä¸å­˜åœ¨è¿”å›-1
+    void deleteValue(const T& value); //1.2-c åˆ é™¤æ‰€æœ‰å€¼ä¸ºvalueçš„ç»“ç‚¹
+    LinkNode<T>* setPos(int pos); //è¿”å›æŒ‡å®šä½ç½®posçš„æŒ‡é’ˆ
+    bool insertPos(const int i, const T value); //1.2-d åœ¨æŒ‡å®šä½ç½®æ’å…¥ç»“ç‚¹
+    bool deletePos(const int i); //1.2-e åˆ é™¤æŒ‡å®šä½ç½®çš„ç»“ç‚¹
+    int reFindPos(const int K); //1.2-f æŸ¥æ‰¾å€’æ•°ç¬¬Kä¸ªç»“ç‚¹
+    void printList(); //è¾“å‡ºé“¾è¡¨
 };
 
-//Çå¿ÕÁ´±í
-template<class T>
-void LinkList<T>::clear()
+/*
+TODO:1.2-a ä»¥è¡¨å°¾æ·»åŠ ç»“ç‚¹çš„æ–¹å¼æ„å»ºé“¾è¡¨,è¾“å…¥ä¸º0æ—¶ï¼Œé“¾è¡¨æ„å»ºç»“æŸã€‚
+ */
+template <class T>
+void LinkList<T>::createLink()
 {
-    while (head->link != NULL) {
-        LinkNode<T> *temp = head->link;
-        head->link = temp->link;
-        delete temp;
+    LinkNode<T>* p;
+    cout << "è¾“å…¥ä»¥ 0 ä¸ºç»“æŸ" << endl;
+    T value;
+    cin >> value;
+    while (value != 0 && value != '0') //è¾“å…¥ä¸º0æ—¶ï¼Œé“¾è¡¨æ„å»ºç»“æŸ
+    {
+        //TODO:æ„å»ºé“¾è¡¨
+        LinkNode<T>* t = new LinkNode<T>(value);
+        p->link = t;
+        t->link = NULL;
+        p = t;
+        cin >> value;
     }
-    tail = head;
-    currPtr = NULL;
-    prevPtr = NULL;
-    position = 0;
 }
 
-//·µ»ØÖ¸¶¨Î»ÖÃiµÄÖ¸Õë
-template<class T>
-LinkNode<T>* LinkList<T>::setPos(int i)
+//è¿”å›é“¾è¡¨ä¸­çš„å…ƒç´ ä¸ªæ•°
+template <class T>
+int LinkList<T>::getSize() const
 {
-    if (i == -1)                         //iÎª-1Ôò¶¨Î»µ½Í·½áµã
-        return head;
     int count = 0;
     LinkNode<T>* p = head->link;
-    while (p != NULL && count < i) {
+    if (isEmpty())
+        return 0;
+    while (p != NULL) {
         p = p->link;
         count++;
     }
-    return p;                           //Ö¸ÏòµÚi¸ö½áµã£¬µ±Á´±í³¤¶ÈĞ¡ÓÚiÊ±·µ»ØNULL
+    return count;
 }
 
-//²åÈëµ¥Á´±íµÄµÚi¸ö½áµã
-template<class T>
-bool LinkList<T>::insertPos(const int i, const T value)
-{
-    LinkNode<T>* p = setPos(i - 1);         //pÊÇµÚi¸ö½áµãµÄÇ°Çı
-    LinkNode<T>* q;                         //qÊÇĞÂ²åÈëµÄ½áµã        
-    if(p==NULL)
-    {
-        cout << "²åÈë²Ù×÷²»ÔÊĞí" << endl;
-        return false;
-    }
-    q = new LinkNode<T>(value, p->link);    // ´´½¨Ò»¸öĞÂµÄ½Úµãq£¬Êı¾İÖµÎªvalue£¬Ö¸ÕëÖ¸ÏòpµÄºó¼Ì½Úµã
-    p->link = q;                            // ½«pµÄÖ¸ÕëÖ¸ÏòĞÂ½Úµãq
-if (p == tail)                              //ÔÚ±íÎ²½øĞĞ²åÈë²Ù×÷
-        tail = q;
-    return true;
-}
-
-//É¾³ıÖ¸¶¨½áµã
-template<class T>
-bool LinkList<T>::deletePos(const int i)
-{
-    LinkNode<T>* p, * q;
-    if ((p = setPos(i - 1)) == NULL||p==tail) {
-        cout << "·Ç·¨É¾³ıµã" << endl;
-        return false;
-    }
-    q = p->link;                //qÎªÕæÕı´ıÉ¾³ıµã
-    p->link = q->link;
-    
-    if (q == tail)              //É¾³ıµãÎª±íÎ²£¬ĞŞ¸ÄÎ²Ö¸Õë
-        tail = p;
-    
-    delete q;
-    return true;
-}
-
-//·´×ª½áµã
-template<class T>
-bool LinkList<T>::invert()
-{
-    LinkNode<T>* q, * p, *R;
-    p = head->link;             //½«pÖ¸ÏòÊ×½áµã
-    q = NULL;                   //qÓÃÀ´Ö´ĞĞpµÄÇ°Ò»¸ö½áµã    
-    while (p != NULL) {             
-        R = q;                  //½«r½Óµ½qÖ®ºó
-        q = p;                  //q½Óµ½pÖ®ºó    
-        p = p->link;            //pÒÆ¶¯µ½ÏÂÒ»¸ö½áµã    
-        q->link = R;            //q½Óµ½Ö®Ç°µÄ½áµã    
-    }
-    tail = head->link;
-    head->link = q;
-    return true;
-}
-
-//·µ»ØÁ´±íÔªËØ¸öÊı
-template<class T>
-int LinkList<T>::getSize() const
-{
-    LinkNode<T>* p=head->link;
-    int i = 0;
-    for (;p != NULL;i++)
-        p = p->link;
-    return i;
-}
-
-//Á´±íÊÇ·ñÎª¿Õ
-template<class T>
+//é“¾è¡¨æ˜¯å¦ä¸ºç©º
+template <class T>
 bool LinkList<T>::isEmpty() const
 {
-    return head->link == NULL;
+    if (head->link == NULL) {
+        return true;
+    }
+    return false;
 }
 
-//³õÊ¼»¯Ö¸ÕëµÄÎ»ÖÃ
-template<class T>
-void LinkList<T>::reset(int pos)
+//æ¸…ç©ºé“¾è¡¨ï¼šé‡Šæ”¾æ‰€æœ‰ç»“ç‚¹çš„å†…å­˜ç©ºé—´
+template <class T>
+void LinkList<T>::clear()
 {
-    if (pos<0 || pos>getSize()) {
-        cout << "Invalid position." << endl;
-        return;
+    LinkNode<T>* p;
+    while (head != NULL) {
+        p = this->head;
+        head = this->head->link;
+        delete p;
     }
-    position = pos;  //¸üĞÂ¼ÇÂ¼µ±Ç°Î»ÖÃ
-    //ÖØĞÂÉèÖÃcurrPtrºÍprevPtr
-    prevPtr = head;
-    currPtr = head->link;
-    for (int i = 0; i < position; i++) {
-        next();
-    }
+    head = tail = NULL;
 }
 
-//Ê¹Ö¸ÕëÒÆ¶¯µ½ÏÂÒ»¸ö½áµã
-template<class T>
-void LinkList<T>::next()
+/*
+TODO:1.2-b æŸ¥æ‰¾å€¼ä¸ºvalueçš„ç»“ç‚¹ï¼Œè¿”å›ç¬¬ä¸€ä¸ªå€¼ä¸ºvalueçš„ç»“ç‚¹ä½ç½®ï¼Œè‹¥ä¸å­˜åœ¨è¿”å›-1ã€‚
+æ¯”å¦‚ï¼šå‡å¦‚ç¬¬ä¸€ä¸ªå…ƒç´ å°±æ˜¯valueï¼Œåˆ™è¿”å›0ï¼Œä¾æ¬¡ç±»æ¨
+è¿”å›å€¼è¯´æ˜ï¼šè¿”å›ç¬¬ä¸€ä¸ªå€¼ä¸ºvalueçš„ç»“ç‚¹ä½ç½®ï¼Œè‹¥ä¸å­˜åœ¨è¿”å›-1ã€‚
+ */
+template <class T>
+int LinkList<T>::findNode(const T& value)
 {
-    if (currPtr != NULL) {
-        prevPtr = currPtr;
-        currPtr = currPtr->link;
+    LinkNode<T>* t = this->head->link;
+    int position = 0;
+    while (t != NULL) {
+        if (t->data == value)
+            return position;
         position++;
+        t = t->link;
     }
+    return -1;
 }
 
-//Ö¸ÕëÊÇ·ñµ½ÁËÁ´Î²
-template<class T>
-bool LinkList<T>::endOfList() const
+/*
+TODO:1.2-c åˆ é™¤æ‰€æœ‰å€¼ä¸ºvalueçš„ç»“ç‚¹
+
+ */
+template <class T>
+void LinkList<T>::deleteValue(const T& value)
 {
-    return currPtr == NULL;
+    LinkNode<T>* t = this->head;
+    while (t->link != NULL) {
+        if (t->link->data == value) {
+            LinkNode<T>* p = t->link;
+            t->link = p->link;
+            delete p;
+        }
+        else t = t->link;
+    }
 }
 
-//·µ»Øµ±Ç°Ö¸ÕëÎ»ÖÃ
-template<class T>
-int LinkList<T>::currentPosition(void)
+//è¿”å›æŒ‡å®šä½ç½®posçš„æŒ‡é’ˆ
+template <class T>
+LinkNode<T>* LinkList<T>::setPos(int pos)
 {
-    return position;
+    if (pos == -1)
+        return head;
+    int count = 0;
+    LinkNode<T>* p = this->head->link;
+    while (p != NULL && count < pos) {
+        p = p->link;
+        count++;
+    }
+    return p;
 }
 
-//ÔÚ±íÍ·²åÈë½áµã
-template<class T>
-void LinkList<T>::insertHead(const T& item)
+/*
+TODO:.2-d åœ¨æŒ‡å®šä½ç½®iæ’å…¥å€¼ä¸ºvalueçš„ç»“ç‚¹ï¼Œæ¯”å¦‚ï¼šiä¸º0ï¼Œè¡¨ç¤ºåœ¨é“¾è¡¨å¤´éƒ¨æ’å…¥
+è¿”å›å€¼è¯´æ˜ï¼šå¦‚æœæˆåŠŸæ’å…¥ï¼Œåˆ™è¿”å›trueï¼Œå¦åˆ™ï¼Œè¿”å›falseã€‚
+æ³¨æ„äº‹é¡¹ï¼šå‡å¦‚æ’å…¥çš„ä½ç½®iéæ³•ï¼Œå³ä½ç½®iå¤„ä¸èƒ½è¿›è¡Œæ’å…¥æ“ä½œï¼Œåˆ™æ‰“å°cout << "æ’å…¥æ“ä½œä¸å…è®¸" << endl;å¹¶è¿”å›falseã€‚
+ */
+template <class T>
+bool LinkList<T>::insertPos(const int i, const T value)
 {
-    LinkNode<T>* newNode = new LinkNode<T>(item, head->link);           //´´½¨ĞÂ½áµã£¬ÆäÖ¸ÕëÖ¸ÏòÔ­Í·½áµãµÄÏÂÒ»¸ö½áµã
-    head->link = newNode;         //½«Í·½áµãµÄÖ¸ÕëÖ¸ÏòĞÂ½áµã
-    if (tail == head)             //Èç¹ûÁ´±íÎª¿Õ£¬¸üĞÂÎ²Ö¸Õë
-        tail = newNode;
+    int size = this->getSize();
+    if (i < 0 || i>size) {
+        cout << "æ’å…¥æ“ä½œä¸å…è®¸" << endl;
+        return false;
+    }
+    LinkNode<T>* t = this->setPos(i - 1);
+    LinkNode<T>* p = new LinkNode<T>(value);
+    p->link = t->link;
+    t->link = p;
+    return true;
 }
 
-//ÔÚ±íÎ²²åÈë½áµã
-template<class T>
-void LinkList<T>::insertTail(const T& item)
+/*
+TODO:1.2-e åˆ é™¤æŒ‡å®šä½ç½®iå¤„çš„ç»“ç‚¹
+è¿”å›å€¼è¯´æ˜ï¼šæˆåŠŸåˆ é™¤ç»“ç‚¹ï¼Œåˆ™è¿”å›trueï¼Œå¦åˆ™è¿”å›falseã€‚
+æ³¨æ„äº‹é¡¹ï¼šå¦‚æœä½ç½®iå¤„æ²¡æœ‰å…ƒç´ ï¼Œåˆ™æ‰“å°cout << "éæ³•åˆ é™¤ç‚¹" << endl;å¹¶è¿”å›false
+ */
+template <class T>
+bool LinkList<T>::deletePos(const int i)
 {
-    LinkNode<T>* newNode = new LinkNode<T>(item);
-
-    if (isEmpty()) {
-        head->link = newNode;
-        tail = newNode;
-    } else {
-        tail->link = newNode;  // ½«µ±Ç°µÄÎ²½áµãµÄÖ¸ÕëÓòÖ¸ÏòĞÂ½Úµã
-        tail = newNode;        // ¸üĞÂÎ²Ö¸Õë£¬Ö¸ÏòĞÂ½Úµã
+    int size = this->getSize();
+    if (i < 0 || i>size - 1) {
+        cout << "éæ³•åˆ é™¤ç‚¹" << endl;
+        return false;
     }
+    LinkNode<T>* t = this->setPos(i - 1);
+    LinkNode<T>* p = t->link;
+    t->link = p->link;
+    delete p;
+    return true;
 }
 
-//ÔÚµ±Ç°½áµãÖ®Ç°²åÈë½áµã
-template<class T>
-void LinkList<T>::insertAt(const T& item) {
-    LinkNode<T>* newNode = new LinkNode<T>(item, currPtr);
-    prevPtr->link = newNode;
-    currPtr = newNode;
-}
-
-//ÔÚµ±Ç°½áµãÖ®ºó²åÈë½áµã
-template<class T>
-void LinkList<T>::insertAfter(const T& item)
+/*
+TODO:1.2-f æŸ¥æ‰¾å€’æ•°ç¬¬Kä¸ªç»“ç‚¹,å¹¶è¿”å›å®ƒçš„å€¼ã€‚æ¯”å¦‚ï¼šKä¸º1ï¼Œè¡¨ç¤ºè¦æŸ¥æ‰¾çš„å…ƒç´ æ˜¯å€’æ•°ç¬¬1ä¸ªï¼Œä¹Ÿå³æ˜¯é“¾è¡¨æœ€åä¸€ä¸ªå…ƒç´ 
+è¿”å›å€¼è¯´æ˜ï¼šå¦‚æœæŸ¥åˆ°åˆ°å€’æ•°ç¬¬Kä¸ªç»“ç‚¹ï¼Œåˆ™è¿”å›å®ƒçš„å€¼ï¼Œå¦åˆ™è¿”å›-1
+æ³¨æ„äº‹é¡¹ï¼š1ï¼‰å¦‚æœè¾“å…¥çš„Kéæ³•ï¼Œå³å°äºç­‰äº0ï¼Œåˆ™æ‰“å°cout << "éæ³•è¾“å…¥" << endl;å¹¶è¿”å›-1
+         2ï¼‰å¦‚æœè¾“å…¥çš„Kéæ³•ï¼Œå³å¤§äºé“¾è¡¨é•¿åº¦ï¼Œåˆ™æ‰“å°cout << "è¡¨é•¿ä¸å¤Ÿ" << endl;å¹¶è¿”å›-1
+ */
+template <class T>
+int LinkList<T>::reFindPos(const int K)
 {
-    /* ĞèÒª×¢Òâ£¬Èç¹û currPtr Ç¡ºÃÖ¸ÏòÁ´±íµÄÎ²½Úµã£¬ÄÇÃ´Õâ¸öÊµÏÖ¿ÉÄÜ»áµ¼ÖÂ´íÎó¡£ÒòÎªÔÚÎ²½ÚµãÖ®ºóÃ»ÓĞ½Úµã£¬Ö±½Ó½«ĞÂ½Úµã²åÈë currPtr->link ¿ÉÄÜ»áµ¼ÖÂÒì³£ĞĞÎª¡£ËùÒÔ£¬ÔÚ insertAfter º¯ÊıÖĞ£¬ÄúĞèÒª¼ì²éÊÇ·ñµ½´ïÁËÎ²½Úµã£¬È»ºó¸ù¾İÇé¿ö´¦Àí²åÈëĞÂ½ÚµãµÄ²Ù×÷¡£ */
-    if (currPtr == tail)
-        insertTail(item);
-    else {
-        LinkNode<T>* newNode = new LinkNode<T>(item, currPtr->link);
-        currPtr->link = newNode;
+    int size = this->getSize();
+    if (K <= 0)
+    {
+        cout << "éæ³•è¾“å…¥" << endl;
+        return -1;
     }
+    else if (K > size)
+    {
+        cout << "è¡¨é•¿ä¸å¤Ÿ" << endl;
+        return -1;
+    }
+    LinkNode<T>* t = this->setPos(size - K);
+    return t->data;
 }
 
-//É¾³ıµ±Ç°½áµã
-template<class T>
-void LinkList<T>::deleteCurrent()
+template <class T>
+void LinkList<T>::printList()
 {
-    if (currPtr == NULL) {
-        cout << "No current node to delete." << endl;
-        return;
+    LinkNode<T>* p = this->head->link;
+    while (p != NULL) {
+        cout << p->data << " ";
+        p = p->link;
     }
-    LinkNode<T>* temp = currPtr;  // ±£´æµ±Ç°½ÚµãÖ¸Õë
-
-    // ½«Ç°Ò»¸ö½ÚµãµÄÖ¸ÕëÁ¬½Óµ½µ±Ç°½ÚµãµÄÏÂÒ»¸ö½Úµã
-    prevPtr->link = currPtr->link;
-
-    // Èç¹ûµ±Ç°½ÚµãÊÇÎ²½Úµã£¬¸üĞÂÎ²Ö¸Õë
-    if (currPtr == tail)
-        tail = prevPtr;
-
-    // ¸üĞÂµ±Ç°½ÚµãÖ¸ÕëºÍÇ°Ò»¸ö½ÚµãÖ¸Õë
-    currPtr = currPtr->link;
-    delete temp;  // ÊÍ·ÅÄÚ´æ
+    cout << endl;
 }
 
-//·µ»Ø¶Ôµ±Ç°½áµã³ÉÔ±Êı¾İµÄÒıÓÃ
-template<class T>
-T& LinkList<T>::data()
+int main()
 {
-    if (currPtr == NULL)
-        // cout << "No current node" << endl;
-        /*ÔÚµ±Ç°½ÚµãÎª¿Õ£¨currPtr == NULL£©Ê±£¬ÄúÖ»ÊÇ´òÓ¡ÁËÏûÏ¢¶øÃ»ÓĞÊµ¼Ê·µ»ØÈÎºÎ¶«Î÷¡£
-        ÔÚÕâÖÖÇé¿öÏÂ£¬Ó¦¸Ã¾ö¶¨·µ»ØÊ²Ã´Öµ»òÕßÊÇÅ×³öÒ»¸öÒì³£¡£
-        Èç¹ûÄúÏ£ÍûÔÚµ±Ç°½ÚµãÎª¿ÕÊ±·µ»ØÒ»¸öÄ¬ÈÏÖµ£¬¿ÉÒÔ¿¼ÂÇ·µ»ØÒ»¸öÒıÓÃ£¬¸ÃÒıÓÃÒıÓÃÒ»¸öÄ¬ÈÏÖµ¡£Èç¹ûÄúÏ£ÍûÔÚµ±Ç°½ÚµãÎª¿ÕÊ±Å×³öÒì³££¬¿ÉÒÔÊ¹ÓÃÀàËÆ throw Óï¾äÀ´ÊµÏÖ¡£*/
-        throw runtime_error("No current node.");
-    return currPtr->data;
-}
-
-int main() {
-    // Create an instance of LinkList for integers
-    LinkList<int> myList;
-
-    // Insert some elements
-    myList.insertTail(10);
-    myList.insertTail(20);
-    myList.insertTail(30);
-
-    // Traverse and print the list
-    myList.reset();
-    while (!myList.endOfList()) {
-        std::cout << myList.data() << " ";
-        myList.next();  // Move the pointer to the next element
-    }
-    std::cout << std::endl;
-
-    // Insert a new element at a specific position
-    myList.insertPos(1, 15);
-
-    // Print the updated list
-    myList.reset();
-    while (!myList.endOfList()) {
-        std::cout << myList.data() << " ";
-        myList.next();  // Move the pointer to the next element
-    }
-    std::cout << std::endl;
-
-    // Delete an element at a specific position
-    myList.deletePos(2);
-
-    // Print the updated list
-    myList.reset();
-    while (!myList.endOfList()) {
-        std::cout << myList.data() << " ";
-        myList.next();  // Move the pointer to the next element
-    }
-    std::cout << std::endl;
-
-    // Invert the list
-    myList.invert();
-
-    // Print the inverted list
-    myList.reset();
-    while (!myList.endOfList()) {
-        std::cout << myList.data() << " ";
-        myList.next();  // Move the pointer to the next element
-    }
-    std::cout << std::endl;
-
+    LinkList<int> l;
+    l.createLink(); //åˆ›å»ºé“¾è¡¨
+    l.printList();
+    int value0, value1, value2, pos0, pos1, pos2;
+    cin >> value0 >> value1 >> value2 >> pos0 >> pos1 >> pos2;
+    cout << "å€¼ä¸º" << value0 << "çš„ç»“ç‚¹ä½ç½®ï¼š" << l.findNode(value0) << endl;
+    l.deleteValue(value1); //åˆ é™¤å€¼ä¸ºvalue1çš„ç»“ç‚¹
+    l.printList();
+    l.insertPos(pos0, value2); //åœ¨pos0å¤„æ’å…¥å€¼ä¸ºvalue2çš„ç»“ç‚¹
+    l.printList();
+    l.deletePos(pos1); //åˆ é™¤pos1å¤„çš„å…ƒç´ 
+    l.printList();
+    int i = l.reFindPos(pos2);
+    cout << "å€’æ•°ç¬¬" << pos2 << "ä¸ªç»“ç‚¹çš„å€¼" << i << endl; //æŸ¥æ‰¾å€’æ•°ç¬¬pos2æ‰€è¡¨ç¤ºçš„ä½ç½®å¤„çš„å…ƒç´ 
     return 0;
 }
